@@ -49,8 +49,8 @@ public class Analyseur {
         reglesProd.add("<une_instruction>::=<test>");
         reglesProd.add("<type>::=int");
         reglesProd.add("<type>::=float");
-        reglesProd.add("<affectation>::=id=nombre;");
-        reglesProd.add("<test>::=if <condition> <instruction> else <instruction>;");
+        reglesProd.add("<affectation>::=id=nombre");
+        reglesProd.add("<test>::=if <condition> <une_instruction> else <une_instruction>");
         reglesProd.add("<condition>::=id<operateur>nombre");
         reglesProd.add("<operateur>::=<");
         reglesProd.add("<operateur>::=>");
@@ -63,7 +63,7 @@ public class Analyseur {
         ajoutRegle("id","<liste_declarations>","<liste_declarations>::=vide");
         ajoutRegle("id","<liste_instructions>","<liste_instructions>::=<une_instruction><liste_instructions>");
         ajoutRegle("id","<une_instruction>","<une_instruction>::=<affectation>");
-        ajoutRegle("id","<affectation>","<affectation>::=id=nombre;");
+        ajoutRegle("id","<affectation>","<affectation>::=id=nombre");
         ajoutRegle("id","<condition>","<condition>::=id<operateur>nombre");
 
         ajoutRegle("int","<liste_declarations>","<liste_declarations>::=<une_declaration><liste_declarations>");
@@ -79,7 +79,7 @@ public class Analyseur {
         ajoutRegle("if","<liste_declarations>","<liste_declarations>::=vide");
         ajoutRegle("if","<liste_instructions>","<liste_instructions>::=<une_instruction><liste_instructions>");
         ajoutRegle("if","<une_instruction>","<une_instruction>::=<test>");
-        ajoutRegle("if","<test>","<test>::=if <condition> <instruction> else <instruction>;");
+        ajoutRegle("if","<test>","<test>::=if <condition> <une_instruction> else <une_instruction>");
 
         ajoutRegle("<","<operateur>","<operateur>::=<");
 

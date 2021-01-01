@@ -4,7 +4,7 @@ import java.util.Stack;
 public class Analyse {
     public static void main( String[] args){
         Analyseur a = new Analyseur();
-        String test = "main(){}";
+        String test = "main(){  id = nombre }";
 
         try{
             if(a.analyser(test)){
@@ -14,7 +14,7 @@ public class Analyse {
             }
 
         }catch(Exception e){
-            e.printStackTrace();
+            System.out.println("NO NO NO");
         }
 
     }
