@@ -1,11 +1,11 @@
 import java.util.*;
 
 public class Analyseur {
-    private static ArrayList<String> terminaux;
-    private static ArrayList<String> nonTerminaux;
-    private static ArrayList<String> reglesProd;
+    private static final ArrayList<String> terminaux;
+    private static final ArrayList<String> nonTerminaux;
+    private static final ArrayList<String> reglesProd;
+    private static final HashMap<String, HashMap<String, String>> tableAnalyse;
     private Stack<String> pile;
-    private static HashMap<String, HashMap<String, String>> tableAnalyse;
 
     static{
         terminaux = new ArrayList<>();
@@ -89,57 +89,55 @@ public class Analyseur {
         ajoutRegle("}","<liste_instructions>","<liste_instructions>::=vide");
     }
 
-    public Analyseur(){
+    public boolean analyser(String mot) throws InconnuException{
         pile = new Stack<>();
         pile.push("$");
         pile.push("<programme>");
-    }
-    public String test(){
-        return tableAnalyse.get("main").get("<programme>");
-    }
 
-
-    public boolean analyser(String mot) throws InconnuException{
         Stack<String> Entree = preparer(mot);
         String hautEntree,hautPile;
         while( !Entree.isEmpty() && !pile.isEmpty() ){
-            if( Entree.isEmpty() || pile.isEmpty() ){
+            if( Entree.isEmpty() || pile.isEmpty() ){// si une pile est vide sans l'autre donc la chaine n est pas acceptée
                 return false;
             }
 
             hautEntree = Entree.peek();
             hautPile = pile.peek();
             if(nonTerminaux.contains(hautPile) && tableAnalyse.get(hautEntree).containsKey(hautPile)){
+                //si le haut de la pile est non terminal on cherche la regle correspondant dans la table d analyse et on l empile
                 if(tableAnalyse.get(hautEntree).containsKey(hautPile)){
                     String regle = tableAnalyse.get(hautEntree).get(hautPile);
-                    empilerRegle(regle);
+                    System.out.println(regle);
+                    empilerRegle(regle);// on empile la regle
                 }else{
+                    //si on trouve pas de regle entre ce non terminal et le terminal dans la pile d entree donc la chaine n est pas acceptée
                     return false;
                 }
-            }else if(terminaux.contains(hautPile)){
+            }else if(terminaux.contains(hautPile)){// si le haut de pile est un non terminal
                 if(hautEntree == hautPile){
                     Entree.pop();
                     pile.pop();
-                }else{
+                }else{// si le haut de pile non terminal et le haut de l entree ne se correspondent pas la mot n est pas accepté
                     return false;
                 }
             }else{
                 return false;
             }
         }
+        //si la pile et l entree sont vide la chaine est acceptée
         return true;
     }
 
-    private Stack<String> preparer(String mot) throws InconnuException{
+    private Stack<String> preparer(String mot) throws InconnuException{ //transforme le mot en pile et envoie une erreur s'il rencontre un symbole qu'il ne reconnait pas
         Stack<String> mot_pile = new Stack<>();
-        mot_pile.push("$");
-        mot = mot.trim();
+        mot_pile.push("$");//fond de pile $
+        mot = mot.trim(); // on enleve les espace entourant la chaine
         while(mot.length() != 0){
             boolean trouve = false;
-            for(String terminal:terminaux){
+            for(String terminal:terminaux){//on compare la chaine avec les symboles terminaux
                 int t = terminal.length();
                 int taille_chaine = mot.length();
-                if(mot.length() >= t && mot.substring(taille_chaine-t,taille_chaine).equals(terminal) ){
+                if(mot.length() >= t && mot.substring(taille_chaine-t,taille_chaine).equals(terminal) ){//on commence par la fin de la chaine puisque le dernier symbole doit etre au fond de la pile
                     trouve = true;
                     mot_pile.push(terminal);
                     mot = mot.substring(0,taille_chaine - t);
@@ -147,7 +145,7 @@ public class Analyseur {
                 }
             }
             mot = mot.trim();
-            if(!trouve && mot.length()!= 0){
+            if(!trouve && mot.length()!= 0){// si on ne trouve aucun mot correspondant et la chaine n'est pas vide donc on a rencontré un symble qu'on ne connait pas
                 throw new InconnuException();
             }
         }
@@ -183,7 +181,7 @@ public class Analyseur {
                         int t = terminal.length();
                         int taille_cote_droit = cote_droit.length();
                         if(cote_droit.length() >= t && cote_droit.substring(taille_cote_droit - t,taille_cote_droit).equals(terminal) ){
-                            if(terminal != "vide"){
+                            if(terminal != "vide"){ //le vide on n'empile rien
                                 pile.push(terminal);
                             }
                             cote_droit = cote_droit.substring(0,taille_cote_droit - t);
